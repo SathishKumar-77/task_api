@@ -1,66 +1,181 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Task Management API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A RESTful API built with Laravel for managing tasks. This API allows users to create, view, update, and delete tasks, with features like validation, pagination, and soft deletes.
 
-## About Laravel
+## Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP >= 8.0
+- Composer
+- MySQL (or another supported database)
+- Laravel 12.x
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Setup Instructions
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. Clone the Repository using this command "git clone https://github.com/SathishKumar-77/todo_api.git"
+2. change the directory `cd todo-api`
+3. install composer to work with larawel `composer install`
+4. Edit .env file inside the project root directory
+`DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=todo_api_db
+DB_USERNAME=root
+DB_PASSWORD=your_password`
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+5. setup database(Here I'm using MySQL)
+`mysql -u root -p
+CREATE DATABASE todo_api_db;
+EXIT;`
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+8. now run migrate `php artisan migrate`
+9. now you can run or start the server using `php artisan serve`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Now the server and our api is running on `http://localhost:8000`
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+API Documentation
+=================
 
-### Premium Partners
+***All endpoints are prefixed with /api. so use tool Postman to test the API(also you can use curl).***
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Endpoints
+=========
+=======================================================================
+Method    || Endpoint	 ||  Action	  ||     Description               ||
+=======================================================================
+POST      || /tasks	     || Store     ||   Create a new task           ||
+GET       || /tasks	     || Index	  ||   List all tasks (paginated)  || 
+GET	      || /tasks/{id} ||	Show	  ||   View a specific task        ||
+PUT	      || /tasks/{id} ||	Update    ||   Update a task               || 
+DELETE    || /tasks/{id} ||	Destroy   ||   Delete a task (soft)        || 
+=======================================================================
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Example Requests
+================
 
-## Code of Conduct
+POST/tasks
+==========
+Req: http://localhost:8000/api/tasks
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Header: Content-Type: application/json
 
-## Security Vulnerabilities
+Body: 
+{    
+    "title": "Morning Work",
+    "description": "Read News",
+    "status": "pending",
+    "due_date": "2025-03-10"
+}
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Res:
 
-## License
+{
+    "id": 1,
+    "title": "Morning Work",
+    "description": "Read News",
+    "status": "pending",
+    "due_date": "2025-03-10",
+    "created_at": "2025-03-01T12:00:00.000000Z",
+    "updated_at": "2025-03-01T12:00:00.000000Z"
+}
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+Validation Rules:
+================
+
+title: Required, string, max 255 characters
+description: Optional, string
+status: Required, pending or completed
+due_date: Required, valid date, after today
+
+GET/tasks
+=========
+
+Req: http://localhost:8000/api/tasks
+
+Res:
+
+{
+    "data": [
+        {
+            "id": 1,
+            "title": "Morning Work",
+            "description": "Read News",
+            "status": "pending",
+            "due_date": "2025-03-10",
+            "created_at": "2025-03-01T12:00:00.000000Z",
+            "updated_at": "2025-03-01T12:00:00.000000Z"
+        }
+    ],
+    "links": {...},
+    "meta": {"per_page": 10, ...}
+}
+
+
+GET/tasks/{id}
+==============
+
+Req: http://localhost:8000/api/tasks/1
+
+Res: 
+{
+    "id": 1,
+    "title": "Morning Work",
+    "description": "Read News",
+    "status": "pending",
+    "due_date": "2025-03-10",
+    "created_at": "2025-03-01T12:00:00.000000Z",
+    "updated_at": "2025-03-01T12:00:00.000000Z"
+}
+
+
+PUT /tasks/{id}
+===============
+
+Req: http://localhost:8000/api/tasks/1
+
+Header: Content-Type: application/json
+
+Body: 
+{    
+    "title": "Morning Work",
+    "description": "Read News",
+    "status": "completed",
+    "due_date": "2025-03-11"
+}
+
+Res:
+{
+    "id": 1,
+    "title": "Morning Work",
+    "description": "Read News",
+    "status": "completed",
+    "due_date": "2025-03-11",
+    "created_at": "2025-03-01T12:00:00.000000Z",
+    "updated_at": "2025-03-01T12:10:00.000000Z"
+}
+
+
+DELETE /tasks/{id}
+==================
+
+Req: http://localhost:8000/api/tasks/1
+
+Res: (204 No Content) No body returned.
+
+
+Additional Features
+===================
+
+**Soft Deletes:** Tasks are soft-deleted (marked with a deleted_at timestamp) instead of permanently removed. We can use Task::withTrashed() to include deleted tasks in queries if needed.
+**Pagination:** Here I've added pagination to ensure messy data while have more data but now each page should have only 10 data.
+
+
+
+
+
+
+
+
