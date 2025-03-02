@@ -11,7 +11,7 @@ A RESTful API built with Laravel for managing tasks. This API allows users to cr
 
 ## Setup Instructions
 
-1. Clone the Repository using this command "git clone https://github.com/SathishKumar-77/todo_api.git"
+1. Clone the Repository using this command "git clone https://github.com/SathishKumar-77/task_api.git"
 2. change the directory `cd todo-api`
 3. install composer to work with larawel `composer install`
 4. Edit .env file inside the project root directory
