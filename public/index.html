@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background: linear-gradient(120deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #333;
+        }
+        .container {
+            max-width: 1100px;
+            padding: 20px;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        .task-form {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            margin-bottom: 40px;
+            animation: slideUp 0.5s ease;
+        }
+        .task-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-left: 2px;
+        }
+        .task-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        .completed {
+            background: linear-gradient(90deg, #e6ffe6, #d9f7d9);
+            opacity: 0.95;
+        }
+        .completed .card-title {
+            text-decoration: line-through;
+            color: #28a745;
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 12px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #1e3c72;
+            box-shadow: 0 0 10px rgba(30, 60, 114, 0.3);
+        }
+        .btn-primary {
+            background: #1e3c72;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #2a5298;
+        }
+        .btn-danger {
+            background: #dc3545;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 15px;
+            transition: background 0.3s ease;
+        }
+        .btn-danger:hover {
+            background: #b02a37;
+        }
+        .btn-warning {
+            background: #ffc107;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 15px;
+            color: #333;
+        }
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        .task-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .status-pending {
+            background: #ffc107;
+            color: #333;
+        }
+        .status-completed {
+            background: #28a745;
+        }
+        .modal-content {
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-header {
+            background: #1e3c72;
+            color: #fff;
+            border-radius: 20px 20px 0 0;
+        }
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-tasks me-2"></i>TaskMaster</h1>
+            <p>Manage our tasks with ease and style</p>
+        </div>
+
+        <!-- Task Form -->
+        <div class="task-form">
+            <h4 class="mb-4 text-dark"><i class="fas fa-plus-circle me-2"></i>Create Task</h4>
+            <form id="taskForm">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="title" placeholder="Task Title" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="date" class="form-control" id="due_date" required>
+                    </div>
+                    <div class="col-12">
+                        <textarea class="form-control" id="description" placeholder="Description (optional)" rows="3"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-select" id="status" required>
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus me-2"></i>Add Task</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Task List -->
+        <div id="taskList" class="row"></div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel"><i class="fas fa-edit me-2"></i>Edit Task</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <input type="hidden" id="editId">
+                        <div class="mb-3">
+                            <label for="editTitle" class="form-label fw-semibold">Title</label>
+                            <input type="text" class="form-control" id="editTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDescription" class="form-label fw-semibold">Description</label>
+                            <textarea class="form-control" id="editDescription" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label fw-semibold">Status</label>
+                            <select class="form-select" id="editStatus" required>
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDueDate" class="form-label fw-semibold">Due Date</label>
+                            <input type="date" class="form-control" id="editDueDate" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveEdit"><i class="fas fa-save me-2"></i>Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Custom Script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const apiUrl = 'http://localhost:8000/api/tasks';
+
+        // Load tasks on page load
+        document.addEventListener('DOMContentLoaded', loadTasks);
+
+        // Add Task
+        document.getElementById('taskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const task = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                status: document.getElementById('status').value,
+                due_date: document.getElementById('due_date').value
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(task)
+                });
+                if (!response.ok) throw new Error('Failed to add task');
+                document.getElementById('taskForm').reset();
+                loadTasks();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        // Load Tasks
+        async function loadTasks() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                const taskList = document.getElementById('taskList');
+                taskList.innerHTML = '';
+                data.data.forEach(task => {
+                    const card = document.createElement('div');
+                    card.className = `col-md-3 mb-4 task-card ${task.status === 'completed' ? 'completed' : ''}`;
+                    card.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">${task.title}</h5>
+                                <p class="card-text text-muted mb-2">${task.description || 'No description'}</p>
+                                <p class="card-text mb-3">
+                                    <span class="task-status status-${task.status}">${task.status}</span>
+                                </p>
+                                <p class="card-text"><small class="text-muted">Due: ${task.due_date}</small></p>
+                                <div class="task-actions">
+                                    <button class="btn btn-primary edit-btn" data-id="${task.id}">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-danger delete-btn" data-id="${task.id}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    taskList.appendChild(card);
+                });
+
+                document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', openEditModal));
+                document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', deleteTask));
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+            }
+        }
+
+        // Open Edit Modal
+        async function openEditModal(e) {
+            const id = e.target.getAttribute('data-id');
+            try {
+                const response = await fetch(`${apiUrl}/${id}`);
+                const task = await response.json();
+                document.getElementById('editId').value = task.id;
+                document.getElementById('editTitle').value = task.title;
+                document.getElementById('editDescription').value = task.description || '';
+                document.getElementById('editStatus').value = task.status;
+                document.getElementById('editDueDate').value = task.due_date;
+                new bootstrap.Modal(document.getElementById('editModal')).show();
+            } catch (error) {
+                alert('Error loading task');
+            }
+        }
+
+        // Save Edited Task
+        document.getElementById('saveEdit').addEventListener('click', async () => {
+            const id = document.getElementById('editId').value;
+            const task = {
+                title: document.getElementById('editTitle').value,
+                description: document.getElementById('editDescription').value,
+                status: document.getElementById('editStatus').value,
+                due_date: document.getElementById('editDueDate').value
+            };
+
+            try {
+                const response = await fetch(`${apiUrl}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(task)
+                });
+                if (!response.ok) throw new Error('Failed to update task');
+                bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                loadTasks();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        // Delete Task
+        async function deleteTask(e) {
+            const id = e.target.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this task?')) {
+                try {
+                    const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+                    if (!response.ok) throw new Error('Failed to delete task');
+                    loadTasks();
+                } catch (error) {
+                    alert(error.message);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
