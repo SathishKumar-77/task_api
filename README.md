@@ -41,16 +41,14 @@ API Documentation
 
 Endpoints
 =========
-=======================================================================
-Method    || Endpoint	 ||  Action	  ||     Description               ||
-=======================================================================
-POST      || /tasks	     || Store     ||   Create a new task           ||
-GET       || /tasks	     || Index	  ||   List all tasks (paginated)  || 
-GET	      || /tasks/{id} ||	Show	  ||   View a specific task        ||
-PUT	      || /tasks/{id} ||	Update    ||   Update a task               || 
-DELETE    || /tasks/{id} ||	Destroy   ||   Delete a task (soft)        || 
-=======================================================================
 
+| Method | Endpoint      | Action  | Description            |
+|--------|---------------|---------|------------------------|
+| POST   | `/tasks`      | Store   | Create a new task      |
+| GET    | `/tasks`      | Index   | List all tasks (paginated) |
+| GET    | `/tasks/{id}` | Show    | View a specific task   |
+| PUT    | `/tasks/{id}` | Update  | Update a task          |
+| DELETE | `/tasks/{id}` | Destroy | Delete a task (soft)   |
 
 Example Requests
 ================
